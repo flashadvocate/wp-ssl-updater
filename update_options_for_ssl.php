@@ -18,12 +18,14 @@ if (PHP_SAPI === 'cli') {
      * we need a proper database name
      */
     if (count($argv) > 1) {
+        
+        $dbname = trim($argv[1]);
 
         /**
          * check with the user to verify that the database
          * is actually the one they want
          */
-        print "The database name you provided was: {$argv[1]}" . PHP_EOL;
+        print "The database name you provided was: {$dbname}" . PHP_EOL;
         print "Are you sure you wish to continue? [y/n]: ";
         $confirm = trim(fgets(STDIN));
 
@@ -40,7 +42,7 @@ if (PHP_SAPI === 'cli') {
             /**
              * Let's use PDO because it's the right thing to do
              */
-            $db = new PDO("mysql:host=localhost;dbname=". DB_NAME, DB_USER, DB_PASS);
+            $db = new PDO("mysql:host=localhost;dbname=". $dbname, DB_USER, DB_PASS);
 
             /**
              * Only looking for wp_options tables. Schemas are handy...
