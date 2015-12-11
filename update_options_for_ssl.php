@@ -85,6 +85,11 @@ if (PHP_SAPI === 'cli') {
                 print $result->rowCount() . " row(s) affected". PHP_EOL;
 
                 /**
+                 * commit the transaction
+                 */
+                $db->commit();
+
+                /**
                  * give it time to breathe...
                  */
                 sleep(1);
