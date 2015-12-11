@@ -34,7 +34,7 @@ if (PHP_SAPI === 'cli') {
          */
         if ($confirm !== 'y') {
             print "Exiting now";
-            exit(0);
+            exit;
         }
 
         try {
