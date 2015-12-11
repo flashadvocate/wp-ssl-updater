@@ -47,7 +47,7 @@ if (PHP_SAPI === 'cli') {
             /**
              * Only looking for wp_options tables. Schemas are handy...
              */
-            $query = "SELECT `table_name` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
+            $query = "SELECT `table_name`, `table_schema` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
             $result = $db->query($query);
             $result->setFetchMode(PDO::FETCH_OBJ);
             $tables = $result->fetchAll();
@@ -74,7 +74,7 @@ if (PHP_SAPI === 'cli') {
                  * pulling from information_schema, the information is fairly
                  * reliable anyway.
                  */
-                $update_query = "UPDATE {$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
+                $update_query = "UPDATE {$table->table_schema}.{$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
                 $result = $db->prepare($update_query);
                 $result->execute();
 
