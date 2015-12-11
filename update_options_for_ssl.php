@@ -68,11 +68,11 @@ if (PHP_SAPI === 'cli') {
          	 * we're assuming here, but if we got this far,
          	 * it's very likely that this one exists
          	 */
-             $update_query = "UPDATE wp_options SET option_value = REPLACE ( option_value, \"http://\", \"https://\" ) WHERE option_name = \"home\" OR option_name = \"siteurl\"";
-            $result = $db->prepare($update_query);
-            $result->execute();
+             $update_query = "UPDATE `wp_options` SET `option_value` = REPLACE ( option_value, 'http://', 'https://' ) WHERE `option_name` = 'home' OR `option_name` = 'siteurl'";
+             $result = $db->prepare($update_query);
+             $result->execute();
 
-            foreach ($tables as $table) {
+             foreach ($tables as $table) {
 
                 /**
                  * only updating home and siteurl options. We're also assuming
