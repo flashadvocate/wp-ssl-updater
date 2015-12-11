@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WP SSL Upater
+ * WP SSL Updater
  *
  * Very primitive script to update wp_options tables for
  * WordPress multisite environments.
