@@ -18,7 +18,7 @@ if (PHP_SAPI === 'cli') {
      * we need a proper database name
      */
     if (count($argv) > 1) {
-        
+
         $dbname = trim($argv[1]);
 
         /**
@@ -47,7 +47,7 @@ if (PHP_SAPI === 'cli') {
             /**
              * Only looking for wp_options tables. Schemas are handy...
              */
-            $query = "SELECT `table_name` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options'";
+            $query = "SELECT `table_name` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
             $result = $db->query($query);
             $result->setFetchMode(PDO::FETCH_OBJ);
             $tables = $result->fetchAll();
