@@ -50,7 +50,7 @@ if (PHP_SAPI === 'cli') {
             /**
              * Let's use PDO because it's the right thing to do
              */
-            $db = new PDO("mysql:host=localhost;dbname=". $dbname, DB_USER, DB_PASS);
+            $db = new PDO("mysql:host=". DB_HOST. ";dbname=". $dbname, DB_USER, DB_PASS);
 
             /**
              * Only looking for wp_options tables. Schemas are handy...
