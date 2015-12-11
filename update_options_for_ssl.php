@@ -46,6 +46,9 @@ if (PHP_SAPI === 'cli') {
 
             foreach ($tables as $table) {
 
+            	// keep track of what we're doing
+            	$db->beginTransaction();
+
                 // only updating home and siteurl options
                 $update_query = "UPDATE {$table->table_name} SET option_value = REPLACE ( option_value, \"http://\", \"https://\" ) WHERE option_name = \"home\" OR option_name = \"siteurl\"";
                 $result = $db->prepare($update_query);
@@ -62,7 +65,11 @@ if (PHP_SAPI === 'cli') {
             exit;
 
         } catch (PDOException $e) {
+
             print $e->getMessage();
+            $db->rollBack();
+          	echo "An error occurred. No changes were made.";
+
         }
     } else {
         print "Error. Usage: php update_options_for_ssl.php databasename";
