@@ -22,6 +22,14 @@ if (PHP_SAPI === 'cli') {
         $dbname = trim($argv[1]);
 
         /**
+         * alert the user that we are looking at all databases (looking at information schema
+         * is non-specific, so we'll be safe in the fact that we are only looking
+         * for wp_options tables)
+         */
+        print "Search all databases (including the one you provided) for wp_options tables? [y/n]: ";
+        $search_global = trim(fgets(STDIN));
+
+        /**
          * check with the user to verify that the database
          * is actually the one they want
          */
@@ -47,7 +55,13 @@ if (PHP_SAPI === 'cli') {
             /**
              * Only looking for wp_options tables. Schemas are handy...
              */
-            $query = "SELECT `table_name`, `table_schema` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
+
+            if ($search_global !== 'y') {
+                $query = "SELECT `table_name`, `table_schema` FROM `information_schema`.`tables` WHERE `table_schema` = '{$dbname}' AND `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
+            } else {
+                $query = "SELECT `table_name`, `table_schema` FROM `information_schema`.`tables` WHERE `table_type` = 'base table' AND `table_name` LIKE 'wp_%_options' OR `table_name` = 'wp_options'";
+            }
+
             $result = $db->query($query);
             $result->setFetchMode(PDO::FETCH_OBJ);
             $tables = $result->fetchAll();
@@ -74,26 +88,31 @@ if (PHP_SAPI === 'cli') {
                  * pulling from information_schema, the information is fairly
                  * reliable anyway.
                  */
-                $update_query = "UPDATE {$table->table_schema}.{$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
+                if ($search_global !== 'y') {
+                    $update_query = "UPDATE {$dbname}.{$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
+                } else {
+                    $update_query = "UPDATE {$table->table_schema}.{$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
+                }
+
                 $result = $db->prepare($update_query);
                 $result->execute();
 
                 /**
                  * some nice user feedback
                  */
-                print "Updating: " . $table->table_name . PHP_EOL;
+                print "Updating: " . $table->table_name . " in db " . $table->table_schema . PHP_EOL;
                 print $result->rowCount() . " row(s) affected". PHP_EOL;
-
-                /**
-                 * commit the transaction
-                 */
-                $db->commit();
 
                 /**
                  * give it time to breathe...
                  */
                 sleep(1);
             }
+
+            /**
+             * commit the transaction
+             */
+            $db->commit();
 
             /**
              * our job is done here
@@ -108,7 +127,7 @@ if (PHP_SAPI === 'cli') {
         	 */
             print $e->getMessage() . PHP_EOL;
             echo "An error occurred. No changes were made.";
-            if (is_object($db)) {
+            if (is_object($db) && $db->rowCount() > 0) {
                 $db->rollBack();
             }
             exit;
