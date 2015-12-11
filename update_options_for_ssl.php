@@ -106,9 +106,12 @@ if (PHP_SAPI === 'cli') {
         	 * something terrible happened, so any "s"'s we
         	 * added are now gone. Woe.
         	 */
-            print $e->getMessage();
-            $db->rollBack();
+            print $e->getMessage() . PHP_EOL;
             echo "An error occurred. No changes were made.";
+            if (is_object($db)) {
+                $db->rollBack();
+            }
+            exit;
         }
     } else {
 
