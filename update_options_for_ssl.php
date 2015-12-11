@@ -62,15 +62,15 @@ if (PHP_SAPI === 'cli') {
              * keep track of what we're doing so we can roll it back if
              * something terrible were to happen...
              */
-         	$db->beginTransaction();
+            $db->beginTransaction();
 
-         	/**
+             /**
          	 * we're assuming here, but if we got this far,
          	 * it's very likely that this one exists
          	 */
-			$update_query = "UPDATE wp_options SET option_value = REPLACE ( option_value, \"http://\", \"https://\" ) WHERE option_name = \"home\" OR option_name = \"siteurl\"";
-			$result = $db->prepare($update_query);
-			$result->execute();
+             $update_query = "UPDATE wp_options SET option_value = REPLACE ( option_value, \"http://\", \"https://\" ) WHERE option_name = \"home\" OR option_name = \"siteurl\"";
+            $result = $db->prepare($update_query);
+            $result->execute();
 
             foreach ($tables as $table) {
 
@@ -101,21 +101,19 @@ if (PHP_SAPI === 'cli') {
              */
             print "All done. Yay!";
             exit;
-
         } catch (PDOException $e) {
 
-        	/**
+            /**
         	 * something terrible happened, so any "s"'s we
         	 * added are now gone. Woe.
         	 */
             print $e->getMessage();
             $db->rollBack();
-          	echo "An error occurred. No changes were made.";
+            echo "An error occurred. No changes were made.";
         }
-
     } else {
 
-    	/**
+        /**
     	 * the user didn't provide a parameter to use
     	 */
         print "Error. Usage: php update_options_for_ssl.php databasename";
