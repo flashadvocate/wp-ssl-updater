@@ -66,14 +66,6 @@ if (PHP_SAPI === 'cli') {
              */
             $db->beginTransaction();
 
-            /**
-             * we're assuming here, but if we got this far
-             * then the table most likely exists
-             */
-            $update_query = "UPDATE `wp_options` SET `option_value` = REPLACE ( option_value, 'http://', 'https://' ) WHERE `option_name` = 'home' OR `option_name` = 'siteurl'";
-            $result = $db->prepare($update_query);
-            $result->execute();
-
             foreach ($tables as $table) {
 
                 /**
@@ -82,7 +74,7 @@ if (PHP_SAPI === 'cli') {
                  * pulling from information_schema, the information is fairly
                  * reliable anyway.
                  */
-                $update_query = "UPDATE {$table->table_name} SET option_value = REPLACE ( option_value, \"http://\", \"https://\" ) WHERE option_name = \"home\" OR option_name = \"siteurl\"";
+                $update_query = "UPDATE {$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
                 $result = $db->prepare($update_query);
                 $result->execute();
 
