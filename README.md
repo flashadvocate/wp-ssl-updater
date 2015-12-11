@@ -16,3 +16,5 @@ mv credentials.ex.php credentials.php
 ```sh
 php update_options_for_ssl databaseNameHere
 ```
+
+It will prompt you on whether you want to search all databases or just the one you provide.
