@@ -70,7 +70,7 @@ if (PHP_SAPI === 'cli') {
              * if we don't find any tables, there's no point in continuing
              */
             if ($result->rowCount() < 1) {
-                print "No wp_options tables were found. Exiting.";
+                print "No wp_options tables were found. Exiting." . PHP_EOL;
                 exit;
             }
 
@@ -117,16 +117,19 @@ if (PHP_SAPI === 'cli') {
             /**
              * our job is done here
              */
-            print "All done. Yay!";
+            print "All done. Yay!" . PHP_EOL;
             exit;
         } catch (PDOException $e) {
 
             /**
-        	 * something terrible happened, so any "s"'s we
-        	 * added are now gone. Woe.
+        	 * something terrible happened
         	 */
             print $e->getMessage() . PHP_EOL;
-            echo "An error occurred. No changes were made.";
+            echo "An error occurred. No changes were made." . PHP_EOL;
+
+            /**
+             * if we made any changes, let's revert them
+             */
             if (is_object($db) && $db->rowCount() > 0) {
                 $db->rollBack();
             }
