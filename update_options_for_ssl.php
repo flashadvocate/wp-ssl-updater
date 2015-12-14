@@ -48,7 +48,7 @@ if (PHP_SAPI === 'cli') {
         try {
 
             /**
-             * Let's use PDO because it's the right thing to do
+             * Create database connection
              */
             $db = new PDO("mysql:host=". DB_HOST. ";dbname=". $dbname, DB_USER, DB_PASS);
 
@@ -67,7 +67,7 @@ if (PHP_SAPI === 'cli') {
             $tables = $result->fetchAll();
 
             /**
-             * if we don't find any tables, there's no point in continuing
+             * if we don't find any tables, stop here
              */
             if ($result->rowCount() < 1) {
                 print "No wp_options tables were found. Exiting." . PHP_EOL;
@@ -75,8 +75,7 @@ if (PHP_SAPI === 'cli') {
             }
 
             /**
-             * keep track of what we're doing so we can roll it back if
-             * something terrible were to happen...
+             * keep track of what we're doing so we can roll it back
              */
             $db->beginTransaction();
 
@@ -86,7 +85,7 @@ if (PHP_SAPI === 'cli') {
                  * only updating home and siteurl options. We're also assuming
                  * that the resulting table_name is viable, but since we're
                  * pulling from information_schema, the information is fairly
-                 * reliable anyway.
+                 * reliable anyway
                  */
                 if ($search_global !== 'y') {
                     $update_query = "UPDATE {$dbname}.{$table->table_name} SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl'";
@@ -98,7 +97,7 @@ if (PHP_SAPI === 'cli') {
                 $result->execute();
 
                 /**
-                 * some nice user feedback
+                 * inform the user what tables are being affected
                  */
                 print "Updating: " . $table->table_name . " in db " . $table->table_schema . PHP_EOL;
                 print $result->rowCount() . " row(s) affected". PHP_EOL;
@@ -117,12 +116,12 @@ if (PHP_SAPI === 'cli') {
             /**
              * our job is done here
              */
-            print "All done. Yay!" . PHP_EOL;
+            print "All done. Exiting." . PHP_EOL;
             exit;
         } catch (PDOException $e) {
 
             /**
-        	 * something terrible happened
+        	 * something bad happened
         	 */
             print $e->getMessage() . PHP_EOL;
             echo "An error occurred. No changes were made." . PHP_EOL;
