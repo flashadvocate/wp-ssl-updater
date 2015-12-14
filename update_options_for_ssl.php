@@ -5,6 +5,21 @@
  *
  * Very primitive script to update wp_options tables for
  * WordPress multisite environments.
+ * 
+ * For reference, this script's results can also be achieved in PMA
+ * via  few extra steps if one doesn't have access to CLI.
+ * 
+ * 1. Use query in search_global definition to find all
+ * wp_options tables via information schema.
+ * 
+ * 2. Export resultset to CSV - Microsoft Excel
+ * 
+ * 3. Paste into Sublime Text and perform REGEXP search and replace (CTRL+H)
+ * 
+ * Search for: (.*);"(.*)"
+ * Replace with: UPDATE $2.$1 SET option_value = REPLACE ( option_value, 'http://', 'https://' ) WHERE option_name = 'home' OR option_name = 'siteurl';
+ * 
+ * Use resulting query in PMA SQL query form
  */
 
 require_once __DIR__ . '/credentials.php';
