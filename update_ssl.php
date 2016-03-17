@@ -22,21 +22,24 @@
  * Use resulting query in PMA SQL query form
  */
 
+require_once __DIR__ . '/credentials.php';
+require_once __DIR__ . '/functions.php';
+
 if (!(isset($_POST['token']) && $_POST['token'] === SLACK_TOKEN)) {
-    exit('Token failure.');
+    slack_response('Token failure! Either this request didn\'t come from Slack, or the token provided to the script doesn\'t match the one provided by Slack');
+    exit();
 }
 
 /**
  * Verify that a parameter was provided
  */
-
 if (!isset($_POST['text'])) {
-    exit('A database name must be provided. Ex. /update-blogs-ssl wordpress');
+    slack_response('A database name must be provided. Ex. /update-blogs-ssl wordpress');
+    exit();
 }
 
 try {
 
-    require_once __DIR__ . '/credentials.php';
 
     /**
      * Create database connection
@@ -56,7 +59,8 @@ try {
      * if we don't find any tables, stop here
      */
     if ($result->rowCount() < 1) {
-        exit('No wp_options tables were found. Something is very wrong!');
+        slack_response('No wp_options tables were found. Something is very wrong! :(');
+        exit();
     }
 
     /**
@@ -94,7 +98,8 @@ try {
     /**
      * our job is done here
      */
-    exit($counter . 'rows updated!');
+    slack_response($counter . 'rows updated for SSL on web00wpb.unity.ncsu.edu! :D', 'in_channel');
+    exit();
 
 } catch (PDOException $e) {
 
@@ -106,8 +111,7 @@ try {
         $db->rollBack();
     }
 
-    echo $e->getMessage() . PHP_EOL;
-    echo "An error occurred. No changes were made." . PHP_EOL;
-
+    slack_response($e->getMessage());
+    slack_response('An error occurred. No changes were made.');
     exit;
 }
