@@ -8,7 +8,7 @@
  * @return string
  */
 function slack_response($message, $response_type = "ephemeral") {
-    return json_encode(array(
+    echo json_encode(array(
         "response_type" => $response_type,
         "text" => $message
     ));
