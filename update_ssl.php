@@ -92,8 +92,13 @@ try {
     /**
      * our job is done here
      */
-    slack_response($counter . ' rows updated on web00wpb.unity.ncsu.edu! :D', 'in_channel');
-    exit();
+    if ($counter > 0) {
+        slack_response($counter . ' rows updated on web00wpb.unity.ncsu.edu! :D', 'in_channel');
+    } else {
+        slack_response('No rows were updated. Wait until a new site is created!');
+    }
+
+    exit;
 
 } catch (PDOException $e) {
 
