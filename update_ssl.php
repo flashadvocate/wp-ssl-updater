@@ -32,21 +32,13 @@ if (!(isset($_POST['token']) && $_POST['token'] === SLACK_TOKEN)) {
     exit();
 }
 
-/**
- * Verify that a parameter was provided
- */
-if (!isset($_POST['text'])) {
-    slack_response('A database name must be provided. Ex. /update-blogs-ssl wordpress');
-    exit();
-}
-
 try {
 
 
     /**
      * Create database connection
      */
-    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . $dbname, DB_USER, DB_PASS);
+    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=wordpress", DB_USER, DB_PASS);
 
     /**
      * Only looking for wp_options tables. Schemas are handy...
@@ -100,7 +92,7 @@ try {
     /**
      * our job is done here
      */
-    slack_response($counter . 'rows updated for SSL on web00wpb.unity.ncsu.edu! :D', 'in_channel');
+    slack_response($counter . ' rows updated on web00wpb.unity.ncsu.edu! :D', 'in_channel');
     exit();
 
 } catch (PDOException $e) {
